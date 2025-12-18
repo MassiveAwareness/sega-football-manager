@@ -27,7 +27,7 @@ Győződj meg róla, hogy a Rust telepítve van a gépeden:
 rustc --version
 ```
 
-Ha nincs, [https://rustup.rs](innen telepítheted)!
+Ha nincs, [innen telepítheted](innen telepíthetedhttps://rustup.rs)!
 
 ### 2. Klónozás és Assets beállítása
 Töltsd le a projektet:
