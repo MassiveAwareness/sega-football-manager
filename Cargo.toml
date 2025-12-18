@@ -1,0 +1,8 @@
+[package]
+name = "sega_football_manager"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
