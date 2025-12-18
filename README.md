@@ -61,7 +61,7 @@ A fordítás után az ablak automatikusan megnyílik.
 ## 🕹️ Irányítás
 A játékot kizárólag billentyűzettel lehet irányítani, hűen a régi konzolos stílushoz.
 
-| Billentyű | Funkció / Esemény |
+| **Billentyű** | **Funkció / Esemény** |
 |-----------|-------------------|
 | ENTER | Játék indítása a főmenüből |
 | A | Következő hét |
