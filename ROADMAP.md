@@ -9,8 +9,8 @@ A cél: A jelenlegi kód optimalizálása és a navigáció logikusabbá tétele
 - [x] **Projekt modularizálása:** Kód szétbontása (`main`, `models`, `ui`, `constants`)
 - [x] **Sega Stílus:** Kék/Sárga/Fehér színvilág, keretek, Quaroxe font
 - [x] **Alap szimuláció:** Csapaterősség alapú eredmények, reálisabb gólszámok (Poisson-eloszláson alapuló random generálás)
-- [ ] **Szezongenerálás:** Véletlenszerű párosítás helyett "Round Robin" (mindenki játszik mindenkivel oda-vissza) menetrend generálása a szezon elején
-- [ ] **UI Navigáció:** Egér támogatás hozzáadása a gombokhoz (a billentyűzet mellé), vagy egy kijelölés (highlight) rendszer a menüpontokhoz
+- [x] **Szezongenerálás:** Véletlenszerű párosítás helyett "Round Robin" (mindenki játszik mindenkivel oda-vissza) menetrend generálása a szezon elején
+- [x] **UI Navigáció:** Egér támogatás hozzáadása a gombokhoz (a billentyűzet mellé), vagy egy kijelölés (highlight) rendszer a menüpontokhoz
 
 ## ⚽ Fázis 2: A Játékosok bevezetése
 A cél: A csapat ne csak egy szám (`strength`) legyen, hanem játékosok összessége, ez a manager játék lelke

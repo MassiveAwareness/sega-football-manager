@@ -1,7 +1,7 @@
 use constants::*;
 use models::Game;
 use macroquad::prelude::*;
-use ui::{draw_sega_box, draw_sega_text};
+use ui::{draw_sega_box, draw_sega_text, draw_sega_button};
 
 mod ui;
 mod models;
@@ -11,7 +11,8 @@ enum AppState {
     MainMenu,
     Dashboard,
     LeagueTable,
-    MatchSimulation
+    MatchSimulation,
+    SeasonEnd
 }
 
 #[macroquad::main("Sega Football Manager")]
@@ -27,9 +28,11 @@ async fn main() {
 
         match state {
             AppState::MainMenu => {
-                draw_sega_box(100.0, 100.0, 600.0, 400.0, Some("SEGA FOOTBALL MANAGER - v0.0.2"), font_ref);
+                draw_sega_box(100.0, 100.0, 600.0, 400.0, Some("SEGA FOOTBALL MANAGER - v0.1.1 (BETA)"), font_ref);
 
-                draw_sega_text("Press Enter to start...", 220.0, 300.0, font_ref, 30, SEGA_WHITE);
+                if draw_sega_button(250.0, 280.0, 300.0, 50.0, "PLAY", font_ref) || is_key_pressed(KeyCode::Enter) {
+                    state = AppState::Dashboard;
+                }
                 draw_sega_text("(C) 2025 MassiveAwareness", 280.0, 450.0, font_ref, 16, GRAY);
 
                 if is_key_pressed(KeyCode::Enter) {
@@ -46,44 +49,46 @@ async fn main() {
 
                 // Bal oldali menü
                 draw_sega_box(20.0, 120.0, 300.0, 400.0, Some("MENU"), font_ref);
-                let options = vec!["[A] NEXT MATCH", "[S] STANDINGS", "[ESC] EXIT"];
-                for (i, opt) in options.iter().enumerate() {
-                    draw_sega_text(opt, 40.0, 180.0 + (i as f32 * 40.0), font_ref, 24, SEGA_WHITE);
+
+                if draw_sega_button(40.0, 180.0, 260.0, 50.0, "NEXT MATCH", font_ref) || is_key_pressed(KeyCode::A) {
+                    if game.week <= game.total_weeks {
+                        game.simulate_week();
+                        state = AppState::MatchSimulation;
+                    } else {
+                        state = AppState::SeasonEnd;
+                    }
                 }
 
-                // Jobb oldali moenü
+                if draw_sega_button(40.0, 250.0, 260.0, 50.0, "STANDINGS", font_ref) || is_key_pressed(KeyCode::S) {
+                    state = AppState::LeagueTable;
+                }
+
+                if draw_sega_button(40.0, 440.0, 260.0, 50.0, "EXIT", font_ref) || is_key_pressed(KeyCode::Escape) {
+                    state = AppState::MainMenu;
+                }
+
                 let res_box_x = 340.0;
                 let res_box_y = 120.0;
                 draw_sega_box(res_box_x, res_box_y, 440.0, 400.0, Some("LAST WEEK"), font_ref);
+
                 if game.last_week_results.is_empty() {
-                    draw_sega_text("NO AVAILABLE RESULTS!", res_box_x + 120.0, res_box_y + 60.0, font_ref, 20, GRAY);
+                    draw_sega_text("NO RESULTS...", res_box_x + 120.0, res_box_y + 60.0, font_ref, 20, GRAY);
                 } else {
                     for (i, res) in game.last_week_results.iter().enumerate() {
                         draw_sega_text(res, res_box_x + 20.0, res_box_y + 60.0 + (i as f32 * 30.0), font_ref, 20, SEGA_WHITE);
                     }
                 }
-
-                if is_key_pressed(KeyCode::A) {
-                    game.simulate_week();
-                    state = AppState::MatchSimulation;
-                }
-
-                if is_key_pressed(KeyCode::S) {
-                    state = AppState::LeagueTable;
-                }
-
-                if is_key_pressed(KeyCode::D) {
-                    state = AppState::MainMenu;
-                }
             }
             AppState::MatchSimulation => {
-                draw_sega_box(150.0, 150.0, 500.0, 300.0, Some("MATCH DAY"), font_ref);
+                draw_sega_box(150.0, 150.0, 500.0, 300.0, Some("MATCHDAY"), font_ref);
 
                 draw_sega_text("ROUND IS PLAYED!", 220.0, 250.0, font_ref, 30, SEGA_WHITE);
-                draw_sega_text("PRESS [SPACE] TO CONTINUE...", 190.0, 350.0, font_ref, 20, SEGA_YELLOW);
-
-                if is_key_pressed(KeyCode::Space) {
-                    state = AppState::Dashboard;
+                if draw_sega_button(250.0, 350.0, 300.0, 50.0, "NEXT (SPACE)", font_ref) || is_key_pressed(KeyCode::Space) {
+                    if game.week > game.total_weeks {
+                        state = AppState::SeasonEnd
+                    } else {
+                        state = AppState::Dashboard;
+                    }
                 }
             }
             AppState::LeagueTable => {
@@ -110,10 +115,20 @@ async fn main() {
                     draw_sega_text(&team.points.to_string(), 600.0, y_pos, font_ref, 20, color);
                 }
 
-                draw_sega_text("[SPACE] BACK", 500.0, 530.0, font_ref, 20, SEGA_YELLOW);
-
-                if is_key_pressed(KeyCode::Space) {
+                if draw_sega_button(250.0, 500.0, 300.0, 40.0, "BACK (SPACE)", font_ref) || is_key_pressed(KeyCode::Space) {
                     state = AppState::Dashboard;
+                }
+            }
+            AppState::SeasonEnd => {
+                draw_sega_box(150.0, 150.0, 500.0, 300.0, Some("END OF SEASON"), font_ref);
+
+                let winner = &game.get_standings()[0];
+                draw_sega_text("CHAMPIONS: ", 280.0, 220.0, font_ref, 24, SEGA_WHITE);
+                draw_sega_text(&winner.name, 280.0, 260.0, font_ref, 30, SEGA_YELLOW);
+
+                if draw_sega_button(250.0, 350.0, 300.0, 50.0, "BACK TO MAIN MENU (ESC)", font_ref) || is_key_pressed(KeyCode::Escape) {
+                    state = AppState::MainMenu;
+                    game = Game::new();
                 }
             }
         }

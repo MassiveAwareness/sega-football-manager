@@ -39,3 +39,37 @@ pub fn draw_sega_text(text: &str, x: f32, y: f32, font: Option<&Font>, size: u16
         ..Default::default()
     });
 }
+
+// Interaktív gombok
+pub fn draw_sega_button(x: f32, y: f32, w: f32, h: f32, text: &str, font: Option<&Font>) -> bool {
+    let mouse_pos = mouse_position();
+    let mx = mouse_pos.0;
+    let my = mouse_pos.1;
+
+    let is_hovered = mx >= x && mx <= x + w && my >= y && my <= y + h;
+
+    let bg_color = if is_hovered { SEGA_LIGHT_BLUE } else { SEGA_BLUE };
+    let text_color = if is_hovered { SEGA_YELLOW } else { SEGA_WHITE };
+
+    draw_rectangle(x + 4.0, y+ 4.0, w, h, BLACK);
+    draw_rectangle(x, y, w, h, bg_color);
+    draw_rectangle_lines(x, y, w, h, 2.0, SEGA_WHITE);
+
+    let font_size = 24;
+    let text_dims = measure_text(text, font, font_size, 1.0);
+    let text_x = x + (w - text_dims.width) / 2.0;
+    let text_y = y + (h / 2.0) + (text_dims.height / 3.0);
+
+    draw_text_ex(text, text_x, text_y, TextParams {
+        font,
+        font_size,
+        color: text_color,
+        ..Default::default()
+    });
+
+    if is_hovered && is_mouse_button_pressed(MouseButton::Left) {
+        return true;
+    }
+
+    false
+}

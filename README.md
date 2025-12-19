@@ -59,7 +59,8 @@ A fordítás után az ablak automatikusan megnyílik.
 ---
 
 ## 🕹️ Irányítás
-A játékot kizárólag billentyűzettel lehet irányítani, hűen a régi konzolos stílushoz.
+A játékot billentyűzettel és egérrel is lehet irányítani.
+Gyorsbillentyűk:
 
 | Billentyű | Funkció / Esemény |
 |-----------|-------------------|
@@ -80,7 +81,7 @@ A kód négy fő modulra van bontva a könnyebb fejleszthetőség érdekében:
 * `src/constants.rs`: A globális beállítások és a Sega-színpaletta definíciói.
 
 ## 🧮 Szimulációs Logika
-A jelenlegi verzió (v0.1.0) egy valószínűségszámításon alapuló modellt használ:
+A jelenlegi verzió (v0.1.1) egy valószínűségszámításon alapuló modellt használ:
 
 1 - Minden meccsen a csapatok **kb. 6 gólhelyzetet** (dobást) kapnak
 2 - A gól esélyét a támadó csapat ereje (`strength`) határozza meg, módosítva a védő csapat erejével
