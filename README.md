@@ -27,7 +27,7 @@ Győződj meg róla, hogy a Rust telepítve van a gépeden:
 rustc --version
 ```
 
-Ha nincs, ![innen telepítheted](https://rustup.rs)
+Ha nincs, [innen telepítheted](https://rustup.rs)!
 
 ### 2. Klónozás és Assets beállítása
 Töltsd le a projektet:
@@ -62,7 +62,7 @@ A fordítás után az ablak automatikusan megnyílik.
 A játékot billentyűzettel és egérrel is lehet irányítani.
 Gyorsbillentyűk:
 
-| Billentyű | Funkció / Esemény |
+| **Billentyű** | **Funkció / Esemény** |
 |-----------|-------------------|
 | ENTER | Játék indítása a főmenüből |
 | A | Következő hét |
