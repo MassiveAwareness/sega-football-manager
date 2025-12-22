@@ -41,8 +41,7 @@ pub fn draw_sega_text(text: &str, x: f32, y: f32, font: Option<&Font>, size: u16
 }
 
 // Interaktív gombok
-pub fn draw_sega_button(x: f32, y: f32, w: f32, h: f32, text: &str, font: Option<&Font>) -> bool {
-    let mouse_pos = mouse_position();
+pub fn draw_sega_button(x: f32, y: f32, w: f32, h: f32, text: &str, font: Option<&Font>, mouse_pos: (f32, f32)) -> bool {
     let mx = mouse_pos.0;
     let my = mouse_pos.1;
 
