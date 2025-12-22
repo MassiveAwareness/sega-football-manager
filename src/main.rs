@@ -1,7 +1,7 @@
 use constants::*;
 use models::Game;
 use macroquad::prelude::*;
-use ui::{draw_sega_box, draw_sega_text, draw_sega_button};
+use ui::{draw_sega_box, draw_sega_text, draw_sega_button, draw_sega_line};
 
 mod constants;
 mod models;
@@ -10,6 +10,7 @@ mod ui;
 enum AppState {
     MainMenu,
     Dashboard,
+    SquadView,
     LeagueTable,
     MatchSimulation,
     EndOfSeason
@@ -17,7 +18,7 @@ enum AppState {
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: "Sega Footbal Manager - v0.1.2 (BETA)".to_owned(),
+        window_title: "Sega Footbal Manager - v0.2.0 (BETA)".to_owned(),
         window_width: 800,
         window_height: 600,
         fullscreen: false,
@@ -34,6 +35,9 @@ async fn main() {
     let mut game = Game::new();
     let mut state = AppState::MainMenu;
     let mut is_fullscreen = false;
+
+    let mut squad_page = 0;
+    const PLAYERS_PER_PAGE: usize = 12;
 
     // --- VIRTUÁLIS KÉPERNYŐ BEÁLLÍTÁSA ---
     let render_target = render_target(VIRTUAL_WIDTH as u32, VIRTUAL_HEIGHT as u32);
@@ -83,7 +87,7 @@ async fn main() {
 
         match state {
             AppState::MainMenu => {
-                draw_sega_box(100.0, 100.0, 600.0, 400.0, Some("SEGA FOOTBALL MANAGER - v0.1.2 (BETA)"), font_ref);
+                draw_sega_box(100.0, 100.0, 600.0, 400.0, Some("SEGA FOOTBALL MANAGER - v0.2.0 (BETA)"), font_ref);
                 if draw_sega_button(250.0, 280.0, 300.0, 50.0, "PLAY (ENTER)", font_ref, virtual_mouse_pos) ||
                 is_key_pressed(KeyCode::Enter) {
                     state = AppState::Dashboard;
@@ -100,7 +104,7 @@ async fn main() {
 
                 draw_sega_box(20.0, 120.0, 300.0, 400.0, Some("MENU"), font_ref);
 
-                if draw_sega_button(40.0, 180.0, 260.0, 50.0, "NEXT MATCH (A)", font_ref, virtual_mouse_pos) ||
+                if draw_sega_button(40.0, 160.0, 260.0, 50.0, "NEXT MATCH (A)", font_ref, virtual_mouse_pos) ||
                 is_key_pressed(KeyCode::A) {
                     if game.week <= game.total_weeks {
                         game.simulate_week();
@@ -110,8 +114,13 @@ async fn main() {
                     }
                 }
 
-                if draw_sega_button(40.0, 250.0, 260.0, 50.0, "STANDINGS (S)", font_ref, virtual_mouse_pos) ||
+                if draw_sega_button(40.0, 230.0, 260.0, 50.0, "SQUAD (S)", font_ref, virtual_mouse_pos) ||
                 is_key_pressed(KeyCode::S) {
+                    state = AppState::SquadView;
+                }
+
+                if draw_sega_button(40.0, 300.0, 260.0, 50.0, "STANDINGS (D)", font_ref, virtual_mouse_pos) ||
+                is_key_pressed(KeyCode::D) {
                     state = AppState::LeagueTable;
                 }
 
@@ -129,6 +138,51 @@ async fn main() {
                 } else {
                     for (i, res) in game.last_week_results.iter().enumerate() {
                         draw_sega_text(res, res_box_x + 20.0, res_box_y + 60.0 + (i as f32 * 30.0), font_ref, 20, SEGA_WHITE);
+                    }
+                }
+            }
+            AppState::SquadView => {
+                draw_sega_box(50.0, 50.0, 700.0, 500.0, Some("Team Squad"), font_ref);
+
+                let header_y = 100.0;
+                draw_sega_text("POS", 70.0, header_y, font_ref, 20, SEGA_YELLOW);
+                draw_sega_text("NAME", 140.0, header_y, font_ref, 20, SEGA_YELLOW);
+                draw_sega_text("AGE", 450.0, header_y, font_ref, 20, SEGA_YELLOW);
+                draw_sega_text("SKILL", 550.0, header_y, font_ref, 20, SEGA_YELLOW);
+
+                draw_sega_line(50.0, 115.0, 750.0, 115.0);
+                draw_sega_line(125.0, 80.0, 125.0, 480.0);
+
+                let players = &game.teams[game.player_team_index].players;
+                let start_index = squad_page * PLAYERS_PER_PAGE;
+
+                for (i, player) in players.iter().skip(start_index).take(12).enumerate() {
+                    let y_pos = 140.0 + (i as f32 * 30.0);
+
+                    let skill_color = if player.skill > 80 { SEGA_YELLOW } else { SEGA_WHITE };
+
+                    draw_sega_text(&player.position.to_string(), 70.0, y_pos, font_ref, 20, SEGA_WHITE);
+                    draw_sega_text(&player.name, 140.0, y_pos, font_ref, 20, SEGA_WHITE);
+                    draw_sega_text(&player.age.to_string(), 450.0, y_pos, font_ref, 20, SEGA_WHITE);
+                    draw_sega_text(&player.skill.to_string(), 550.0, y_pos, font_ref, 20, skill_color);
+                }
+
+                if draw_sega_button(250.0, 500.0, 300.0, 40.0, "BACK (SPACE)", font_ref, virtual_mouse_pos) ||
+                is_key_pressed(KeyCode::Space) {
+                    state = AppState::Dashboard;
+                }
+
+                if squad_page > 0 {
+                    if draw_sega_button(60.0, 500.0, 150.0, 40.0, "< PREV", font_ref, virtual_mouse_pos) ||
+                    is_key_pressed(KeyCode::Left) {
+                        squad_page -= 1;
+                    }
+                }
+
+                if (squad_page + 1) * PLAYERS_PER_PAGE < players.len() {
+                    if draw_sega_button(590.0, 500.0, 150.0, 40.0, "NEXT >", font_ref, virtual_mouse_pos)
+                    || is_key_pressed(KeyCode::Right) {
+                        squad_page += 1;
                     }
                 }
             }
@@ -158,8 +212,8 @@ async fn main() {
                 draw_sega_text("GA", 550.0, header_y, font_ref, 20, SEGA_YELLOW);
                 draw_sega_text("PTS", 600.0, header_y, font_ref, 20, SEGA_YELLOW);
 
-                draw_line(50.0, 115.0, 750.0, 115.0, 2.0, SEGA_WHITE);
-                draw_line(120.0, 80.0, 120.0, 420.0, 2.0, SEGA_WHITE);
+                draw_sega_line(50.0, 115.0, 750.0, 115.0);
+                draw_sega_line(120.0, 80.0, 120.0, 420.0);
 
                 let standings = game.get_standings();
                 for (i, team) in standings.iter().enumerate() {

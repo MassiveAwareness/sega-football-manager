@@ -72,3 +72,19 @@ pub fn draw_sega_button(x: f32, y: f32, w: f32, h: f32, text: &str, font: Option
 
     false
 }
+
+pub fn draw_sega_line(x1: f32, y1: f32, x2: f32, y2: f32) {
+    let thickness = 5.0;
+
+    if (x1 - x2).abs() < 0.1 {
+        let h = (y2 - y1).abs();
+        let start_y = y1.min(y2);
+        draw_rectangle(x1, start_y, thickness, h, SEGA_WHITE);
+    } else if (y1- y2).abs() < 0.1 {
+        let w = (x2 - x1).abs();
+        let start_x = x1.min(x2);
+        draw_rectangle(start_x, y1, w, thickness, SEGA_WHITE);
+    } else {
+        draw_line(x1, y1, x2, y2, thickness, SEGA_WHITE);
+    }
+}
