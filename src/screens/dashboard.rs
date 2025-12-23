@@ -3,8 +3,8 @@
 use super::AppState;
 use crate::models::Game;
 use macroquad::prelude::*;
-use crate::constants::{SEGA_YELLOW, SEGA_WHITE, SEGA_GRAY};
 use crate::ui::{draw_sega_box, draw_sega_button, draw_sega_text};
+use crate::constants::{SEGA_YELLOW, SEGA_WHITE, SEGA_GRAY, SEGA_RED};
 
 pub fn draw_dashboard(game: &mut Game, font: Option<&Font>, mouse_pos: (f32, f32), squad_page: &mut usize) -> AppState {
     draw_sega_box(20.0, 20.0, 760.0, 80.0, None, font);
@@ -13,6 +13,9 @@ pub fn draw_dashboard(game: &mut Game, font: Option<&Font>, mouse_pos: (f32, f32
     draw_sega_text(&format!("WEEK: {} / {}", game.week, game.total_weeks), 40.0, 80.0, font, 24, SEGA_YELLOW);
 
     draw_sega_box(20.0, 120.0, 300.0, 400.0, Some("MENU"), font);
+
+    let starter_count = game.teams[game.player_team_index].players.iter().filter(|p| p.is_starting).count();
+    let is_squad_valid = starter_count == 11;
 
     if draw_sega_button(40.0, 160.0, 260.0, 50.0, "SQUAD (A)", font, mouse_pos) ||
     is_key_pressed(KeyCode::A) {
@@ -25,14 +28,19 @@ pub fn draw_dashboard(game: &mut Game, font: Option<&Font>, mouse_pos: (f32, f32
         return AppState::TopScorers;
     }
 
-    if draw_sega_button(40.0, 280.0, 260.0, 50.0, "NEXT MATCH (S)", font, mouse_pos) ||
-    is_key_pressed(KeyCode::S) {
-        if game.week <= game.total_weeks {
-            game.simulate_week();
-            return AppState::MatchSimulation;
-        } else {
-            return AppState::EndOfSeason;
+    if is_squad_valid {
+        if draw_sega_button(40.0, 280.0, 260.0, 50.0, "NEXT MATCH (S)", font, mouse_pos) ||
+        is_key_pressed(KeyCode::S) {
+            if game.week <= game.total_weeks {
+                game.simulate_week();
+                return AppState::MatchSimulation;
+            } else {
+                return AppState::EndOfSeason;
+            }
         }
+    } else {
+        draw_sega_box(40.0, 280.0, 260.0, 50.0, None, font);
+        draw_sega_text("INVALID SQUAD!", 60.0, 315.0, font, 24, SEGA_RED);
     }
 
     if draw_sega_button(40.0, 340.0, 260.0, 50.0, "STANDINGS (D)", font, mouse_pos) ||

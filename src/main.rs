@@ -10,10 +10,10 @@ mod constants;
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: "Sega Football Manager - v0.2.0 (BETA)".to_owned(),
+        window_title: "Sega Football Manager - v0.2.1 (BETA)".to_owned(),
         window_width: 800,
         window_height: 600,
-        fullscreen: false,
+        fullscreen: true,
         window_resizable: true,
         ..Default::default()
     }
@@ -66,7 +66,7 @@ async fn main() {
         state = match state {
             AppState::MainMenu => screens::main_menu::draw_main_menu(font_ref, virtual_mouse_pos),
             AppState::Dashboard => screens::dashboard::draw_dashboard(&mut game, font_ref, virtual_mouse_pos, &mut squad_page),
-            AppState::SquadView => screens::squad_view::draw_squad_view(&game, font_ref, virtual_mouse_pos, &mut squad_page),
+            AppState::SquadView => screens::squad_view::draw_squad_view(&mut game, font_ref, virtual_mouse_pos, &mut squad_page),
             AppState::LeagueTable => screens::league_table::draw_league_table(&game, font_ref, virtual_mouse_pos),
             AppState::TopScorers => screens::top_scorers::draw_top_scorers(&game, font_ref, virtual_mouse_pos),
             AppState::MatchSimulation => screens::match_simulation::draw_match_simulation(&game, font_ref, virtual_mouse_pos),

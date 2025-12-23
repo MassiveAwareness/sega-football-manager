@@ -82,6 +82,13 @@ impl Game {
         }
 
         players.sort_by_key(|p| p.position as u8);
+
+        for i in 0..11 {
+            if i < players.len() {
+                players[i].is_starting = true;
+            }
+        }
+        
         players
     }
 

@@ -28,7 +28,8 @@ pub struct Player {
     pub skill: u8,
     pub age: u8,
     pub goals_scored: u32,
-    pub matches_played: u32
+    pub matches_played: u32,
+    pub is_starting: bool
 }
 
 impl Player {
@@ -39,7 +40,8 @@ impl Player {
             skill,
             age,
             goals_scored: 0,
-            matches_played: 0
+            matches_played: 0,
+            is_starting: false
         }
     }
 }

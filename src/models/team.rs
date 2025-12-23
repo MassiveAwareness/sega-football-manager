@@ -27,13 +27,12 @@ impl Team {
     }
 
     pub fn get_strength(&self) -> u32 {
-        if self.players.is_empty() { return 0; }
+        let starters: Vec<&Player> = self.players.iter().filter(|p| p.is_starting).collect();
 
-        let mut sorted_players = self.players.clone();
-        sorted_players.sort_by(|a, b| b.skill.cmp(&a.skill));
+        if starters.is_empty() { return 0; }
 
-        let count = sorted_players.len().min(11);
-        let sum: u32 = sorted_players.iter().take(count).map(|p| p.skill as u32).sum();
+        let count = starters.len();
+        let sum: u32 = starters.iter().map(|p| p.skill as u32).sum();
 
         sum / count as u32
     }
